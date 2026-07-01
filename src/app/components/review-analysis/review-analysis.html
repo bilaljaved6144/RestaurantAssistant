@@ -1,0 +1,66 @@
+<div class="review-wrapper">
+  <div class="examples-row">
+    <span class="examples-label">Try an example:</span>
+    @for (ex of examples; track ex) {
+      <button class="example-chip" (click)="useExample(ex)">{{ ex | slice:0:50 }}…</button>
+    }
+  </div>
+
+  <textarea
+    [(ngModel)]="reviewText"
+    placeholder="Enter a restaurant review here..."
+    rows="5"
+    class="review-input">
+  </textarea>
+
+  <button class="analyze-btn" (click)="analyze()" [disabled]="isLoading() || !reviewText.trim()">
+    @if (isLoading()) { ⏳ Analyzing... } @else { ⭐ Analyze Review }
+  </button>
+
+  @if (result()) {
+    <div class="result-card">
+      @if (result().error) {
+        <div class="error-msg">⚠️ {{ result().error }}</div>
+      } @else {
+        <div class="sentiment-badge" [class]="getSentimentClass()">
+          {{ getSentimentEmoji() }} {{ result().sentiment }}
+        </div>
+
+        <div class="scores-grid">
+          <div class="score-item positive">
+            <span class="score-label">😊 Positive</span>
+            <div class="score-bar">
+              <div class="score-fill" [style.width.%]="result().confidenceScores.positive"></div>
+            </div>
+            <span class="score-value">{{ result().confidenceScores.positive }}%</span>
+          </div>
+          <div class="score-item neutral">
+            <span class="score-label">😐 Neutral</span>
+            <div class="score-bar">
+              <div class="score-fill" [style.width.%]="result().confidenceScores.neutral"></div>
+            </div>
+            <span class="score-value">{{ result().confidenceScores.neutral }}%</span>
+          </div>
+          <div class="score-item negative">
+            <span class="score-label">😞 Negative</span>
+            <div class="score-bar">
+              <div class="score-fill" [style.width.%]="result().confidenceScores.negative"></div>
+            </div>
+            <span class="score-value">{{ result().confidenceScores.negative }}%</span>
+          </div>
+        </div>
+
+        @if (result().keyPhrases?.length) {
+          <div class="key-phrases">
+            <h4>🔑 Key Phrases</h4>
+            <div class="phrase-tags">
+              @for (phrase of result().keyPhrases; track phrase) {
+                <span class="phrase-tag">{{ phrase }}</span>
+              }
+            </div>
+          </div>
+        }
+      }
+    </div>
+  }
+</div>

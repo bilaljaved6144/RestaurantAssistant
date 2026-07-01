@@ -1,0 +1,110 @@
+.vision-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.upload-zone {
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 200px;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+.upload-zone:hover { border-color: #e63946; }
+
+.upload-label {
+  display: block;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: #888;
+  text-align: center;
+  min-height: 180px;
+}
+
+.upload-icon  { font-size: 2.5rem; margin-bottom: 10px; }
+.upload-placeholder p    { margin: 0 0 6px; font-size: 0.95rem; color: #555; }
+.upload-placeholder span { font-size: 0.8rem; }
+
+.preview-img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  display: block;
+  padding: 8px;
+}
+
+.action-row { text-align: center; }
+
+.analyze-btn {
+  background: #e63946;
+  color: #fff;
+  border: none;
+  padding: 11px 32px;
+  border-radius: 24px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.analyze-btn:hover:not(:disabled) { background: #c1121f; }
+.analyze-btn:disabled              { opacity: 0.5; cursor: not-allowed; }
+
+.result-card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.result-section { margin-bottom: 16px; }
+.result-section h4 { margin: 0 0 8px; color: #333; font-size: 0.95rem; }
+
+.caption-text {
+  font-style: italic;
+  color: #555;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  background: #fff3f3;
+  border: 1px solid #e63946;
+  color: #333;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.tag em { color: #e63946; font-style: normal; margin-left: 4px; }
+
+.ocr-text {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  margin: 0;
+  color: #555;
+  border: 1px solid #eee;
+}
+
+.no-results { color: #888; font-style: italic; text-align: center; }
+.error-msg  { color: #e63946; font-weight: 500; }

@@ -1,0 +1,29 @@
+<div class="app-shell">
+  <header class="app-header">
+    <div class="header-inner">
+      <span class="logo">🍽️</span>
+      <div>
+        <h1>AI Restaurant Assistant</h1>
+        <p class="tagline">Powered by Azure OpenAI · Vision · Language · Speech</p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tab-nav">
+    <button class="tab-btn" [class.active]="activeTab() === 'chat'"   (click)="setTab('chat')">💬 AI Chat</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'vision'" (click)="setTab('vision')">📷 Image Analysis</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'review'" (click)="setTab('review')">⭐ Review Analysis</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'voice'"  (click)="setTab('voice')">🎤 Voice Ordering</button>
+  </nav>
+
+  <main class="tab-content">
+    @if (activeTab() === 'chat')   { <app-chat /> }
+    @if (activeTab() === 'vision') { <app-image-analysis /> }
+    @if (activeTab() === 'review') { <app-review-analysis /> }
+    @if (activeTab() === 'voice')  { <app-voice-ordering /> }
+  </main>
+
+  <footer class="app-footer">
+    <p>Azure OpenAI &bull; Azure AI Vision &bull; Azure AI Language &bull; Azure AI Speech</p>
+  </footer>
+</div>

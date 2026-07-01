@@ -1,0 +1,59 @@
+<div class="vision-wrapper">
+  <div class="upload-zone">
+    <label class="upload-label" for="imageInput">
+      @if (previewUrl()) {
+        <img [src]="previewUrl()" alt="Preview" class="preview-img" />
+      } @else {
+        <div class="upload-placeholder">
+          <div class="upload-icon">📷</div>
+          <p>Click to upload a food image or restaurant menu</p>
+          <span>JPG, PNG, WEBP supported</span>
+        </div>
+      }
+    </label>
+    <input id="imageInput" type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+  </div>
+
+  <div class="action-row">
+    <button class="analyze-btn" (click)="analyze()" [disabled]="!selectedFile() || isLoading()">
+      @if (isLoading()) { ⏳ Analyzing... } @else { 🔍 Analyze Image }
+    </button>
+  </div>
+
+  @if (result()) {
+    <div class="result-card">
+      @if (result().error) {
+        <div class="error-msg">⚠️ {{ result().error }}</div>
+      } @else {
+        @if (result().caption) {
+          <div class="result-section">
+            <h4>🖼️ Caption</h4>
+            <p class="caption-text">{{ result().caption }}</p>
+          </div>
+        }
+
+        @if (result().detectedObjects?.length) {
+          <div class="result-section">
+            <h4>🍕 Detected Food / Objects</h4>
+            <div class="tags">
+              @for (obj of result().detectedObjects; track obj.name) {
+                <span class="tag">{{ obj.name }} <em>{{ obj.confidence }}%</em></span>
+              }
+            </div>
+          </div>
+        }
+
+        @if (result().ocrText) {
+          <div class="result-section">
+            <h4>📋 Extracted Text (OCR)</h4>
+            <pre class="ocr-text">{{ result().ocrText }}</pre>
+          </div>
+        }
+
+        @if (!result().caption && !result().detectedObjects?.length && !result().ocrText) {
+          <p class="no-results">No recognizable content found in the image.</p>
+        }
+      }
+    </div>
+  }
+</div>

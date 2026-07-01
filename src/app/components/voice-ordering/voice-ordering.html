@@ -1,0 +1,52 @@
+<div class="voice-wrapper">
+  <div class="mic-section">
+    <button
+      class="mic-btn"
+      [class.recording]="isRecording()"
+      [class.processing]="isProcessing()"
+      (click)="toggleRecording()"
+      [disabled]="isProcessing()">
+      @if (isRecording()) { 🛑 } @else if (isProcessing()) { ⏳ } @else { 🎤 }
+    </button>
+    <p class="status-msg">{{ statusMessage() }}</p>
+  </div>
+
+  <div class="flow-diagram">
+    <div class="flow-step" [class.active]="isRecording()">
+      <span class="step-icon">🎤</span>
+      <span>Speech</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" [class.active]="isProcessing() && !aiResponse()">
+      <span class="step-icon">📝</span>
+      <span>Text</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" [class.active]="!!transcribedText() && !aiResponse()">
+      <span class="step-icon">🤖</span>
+      <span>AI</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" [class.active]="!!aiResponse()">
+      <span class="step-icon">🔊</span>
+      <span>Response</span>
+    </div>
+  </div>
+
+  @if (transcribedText()) {
+    <div class="transcript-card">
+      <h4>📝 You said:</h4>
+      <p>{{ transcribedText() }}</p>
+    </div>
+  }
+
+  @if (aiResponse()) {
+    <div class="response-card">
+      <h4>🤖 Restaurant AI:</h4>
+      <p>{{ aiResponse() }}</p>
+      @if (audioUrl()) {
+        <button class="replay-btn" (click)="replayAudio()">🔊 Replay Response</button>
+      }
+    </div>
+  }
+</div>
