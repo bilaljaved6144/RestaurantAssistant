@@ -9,16 +9,20 @@ import { ApiService } from '../../services/api.service';
   styleUrl: './voice-ordering.css'
 })
 export class VoiceOrdering implements OnDestroy {
-  isRecording    = signal(false);
-  isProcessing   = signal(false);
-  statusMessage  = signal('Click the microphone to start recording your order');
+  isRecording     = signal(false);
+  isProcessing    = signal(false);
+  statusMessage   = signal('Click the microphone to start recording your order');
   transcribedText = signal('');
-  aiResponse     = signal('');
-  audioUrl       = signal<string | null>(null);
+  aiResponse      = signal('');
+  audioUrl        = signal<string | null>(null);
 
-  private mediaRecorder: MediaRecorder | null = null;
-  private audioChunks: Blob[] = [];
-  private currentAudio: HTMLAudioElement | null = null;
+  private readonly SAMPLE_RATE = 16000;
+  private mediaStream:   MediaStream | null = null;
+  private audioContext:  AudioContext | null = null;
+  private sourceNode:    MediaStreamAudioSourceNode | null = null;
+  private processorNode: ScriptProcessorNode | null = null;
+  private pcmChunks:     Float32Array[] = [];
+  private currentAudio:  HTMLAudioElement | null = null;
 
   constructor(private api: ApiService) {}
 
@@ -32,20 +36,27 @@ export class VoiceOrdering implements OnDestroy {
 
   private async startRecording() {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.audioChunks = [];
+      this.mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: { sampleRate: this.SAMPLE_RATE, channelCount: 1, echoCancellation: true }
+      });
+
+      this.audioContext  = new AudioContext({ sampleRate: this.SAMPLE_RATE });
+      this.sourceNode    = this.audioContext.createMediaStreamSource(this.mediaStream);
+      this.processorNode = this.audioContext.createScriptProcessor(4096, 1, 1);
+      this.pcmChunks     = [];
+
+      // Capture raw PCM Float32 samples from the microphone
+      this.processorNode.onaudioprocess = (e) => {
+        this.pcmChunks.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+      };
+
+      this.sourceNode.connect(this.processorNode);
+      this.processorNode.connect(this.audioContext.destination);
+
+      this.isRecording.set(true);
       this.transcribedText.set('');
       this.aiResponse.set('');
       this.audioUrl.set(null);
-
-      this.mediaRecorder = new MediaRecorder(stream);
-      this.mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) this.audioChunks.push(e.data);
-      };
-      this.mediaRecorder.onstop = () => this.processAudio(stream);
-
-      this.mediaRecorder.start();
-      this.isRecording.set(true);
       this.statusMessage.set('🔴 Recording... Click again to stop');
     } catch {
       this.statusMessage.set('⚠️ Microphone access denied. Please allow microphone permissions.');
@@ -53,21 +64,59 @@ export class VoiceOrdering implements OnDestroy {
   }
 
   private stopRecording() {
-    this.mediaRecorder?.stop();
+    this.processorNode?.disconnect();
+    this.sourceNode?.disconnect();
+    this.audioContext?.close();
+    this.mediaStream?.getTracks().forEach(t => t.stop());
+
     this.isRecording.set(false);
+    this.isProcessing.set(true);
     this.statusMessage.set('Processing your speech...');
+
+    const wavBlob = this.encodeWav(this.pcmChunks, this.SAMPLE_RATE);
+    this.sendAudio(wavBlob);
   }
 
-  private processAudio(stream: MediaStream) {
-    stream.getTracks().forEach(t => t.stop());
-    const mimeType = this.mediaRecorder?.mimeType || 'audio/webm';
-    const blob = new Blob(this.audioChunks, { type: mimeType });
+  /** Encode collected Float32 PCM chunks into a 16-bit mono WAV Blob. */
+  private encodeWav(chunks: Float32Array[], sampleRate: number): Blob {
+    const totalLen = chunks.reduce((a, c) => a + c.length, 0);
+    const pcm      = new Float32Array(totalLen);
+    let   offset   = 0;
+    for (const c of chunks) { pcm.set(c, offset); offset += c.length; }
 
-    this.isProcessing.set(true);
+    // Float32 → Int16 PCM
+    const int16 = new Int16Array(pcm.length);
+    for (let i = 0; i < pcm.length; i++) {
+      const s = Math.max(-1, Math.min(1, pcm[i]));
+      int16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+    }
+
+    // Build RIFF/WAV header (44 bytes)
+    const buf = new ArrayBuffer(44 + int16.byteLength);
+    const v   = new DataView(buf);
+    const str = (o: number, s: string) =>
+      [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+
+    str(0,  'RIFF'); v.setUint32(4,  36 + int16.byteLength, true);
+    str(8,  'WAVE'); str(12, 'fmt ');
+    v.setUint32(16, 16,          true);  // PCM chunk size
+    v.setUint16(20, 1,           true);  // PCM format
+    v.setUint16(22, 1,           true);  // mono
+    v.setUint32(24, sampleRate,  true);
+    v.setUint32(28, sampleRate * 2, true); // byte rate (16-bit mono)
+    v.setUint16(32, 2,           true);  // block align
+    v.setUint16(34, 16,          true);  // bits per sample
+    str(36, 'data'); v.setUint32(40, int16.byteLength, true);
+    new Uint8Array(buf, 44).set(new Uint8Array(int16.buffer));
+
+    return new Blob([buf], { type: 'audio/wav' });
+  }
+
+  private sendAudio(blob: Blob) {
     this.api.transcribeSpeech(blob).subscribe({
       next: (res) => {
-        if (res.error) {
-          this.statusMessage.set('❌ Transcription failed: ' + res.error);
+        if (res.error || !res.text?.trim()) {
+          this.statusMessage.set('❌ ' + (res.error ?? 'No speech detected. Please speak clearly and try again.'));
           this.isProcessing.set(false);
           return;
         }
@@ -115,11 +164,13 @@ export class VoiceOrdering implements OnDestroy {
     });
   }
 
-  replayAudio() {
-    this.currentAudio?.play();
-  }
+  replayAudio() { this.currentAudio?.play(); }
 
   ngOnDestroy() {
-    if (this.audioUrl()) URL.revokeObjectURL(this.audioUrl()!);
+    const url = this.audioUrl();
+    if (url) URL.revokeObjectURL(url);
+    this.mediaStream?.getTracks().forEach(t => t.stop());
+    this.audioContext?.close();
   }
 }
+

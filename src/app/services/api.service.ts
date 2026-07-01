@@ -24,7 +24,7 @@ export class ApiService {
 
   transcribeSpeech(audio: Blob): Observable<any> {
     const form = new FormData();
-    form.append('audio', audio, 'recording.webm');
+    form.append('audio', audio, 'recording.wav');
     return this.http.post(`${this.baseUrl}/speech/transcribe`, form);
   }
 
