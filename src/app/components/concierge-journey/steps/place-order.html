@@ -1,0 +1,105 @@
+<div class="step-panel">
+  <div class="step-intro">
+    <h3>Step 3 · Place your order by voice</h3>
+    <p>
+      Speak your order naturally. <strong>Azure Speech</strong> transcribes it,
+      <strong>Azure OpenAI</strong> matches every item against the extracted menu and
+      computes a total, then <strong>Speech TTS</strong> reads the confirmation back.
+    </p>
+  </div>
+
+  @if (!session.hasMenu()) {
+    <div class="error-msg">⚠️ No menu is loaded. Please go back to Step 1.</div>
+  } @else {
+    <div class="menu-banner">
+      <strong>Ordering from</strong> {{ session.menuItems().length }}-item menu.
+      <button class="link-btn" (click)="showMenu.set(!showMenu())">
+        {{ showMenu() ? 'Hide' : 'Show' }} menu
+      </button>
+      @if (showMenu()) {
+        <ul class="menu-list">
+          @for (item of session.menuItems(); track item.name) {
+            <li>
+              <span>{{ item.name }}</span>
+              @if (item.price !== null && item.price !== undefined) {
+                <span class="price">${{ item.price.toFixed(2) }}</span>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="mic-area">
+      <button
+        class="mic-btn"
+        [class.recording]="phase() === 'recording'"
+        [class.busy]="isBusy"
+        (click)="toggleRecording()"
+        [disabled]="isBusy">
+        @if (phase() === 'recording') { 🛑 }
+        @else if (isBusy)             { ⏳ }
+        @else                          { 🎤 }
+      </button>
+      <p class="status">{{ statusMessage() }}</p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step" [class.active]="phase() === 'recording'">🎤 Speech</div>
+      <span class="arrow">→</span>
+      <div class="flow-step" [class.active]="phase() === 'transcribing'">📝 Text</div>
+      <span class="arrow">→</span>
+      <div class="flow-step" [class.active]="phase() === 'parsing'">🤖 Parse</div>
+      <span class="arrow">→</span>
+      <div class="flow-step" [class.active]="phase() === 'speaking'">🔊 Confirm</div>
+    </div>
+
+    @if (errorMsg()) { <div class="error-msg">⚠️ {{ errorMsg() }}</div> }
+
+    @if (transcribedText()) {
+      <div class="card">
+        <h4>📝 You said</h4>
+        <p class="quote">"{{ transcribedText() }}"</p>
+      </div>
+    }
+
+    @if (order) {
+      <div class="card order-card">
+        <h4>🧾 Your order</h4>
+        @if (order.items.length > 0) {
+          <table class="order-table">
+            <thead>
+              <tr><th>Item</th><th>Qty</th><th>Price</th><th>Line</th></tr>
+            </thead>
+            <tbody>
+              @for (line of order.items; track line.name) {
+                <tr>
+                  <td>{{ line.name }}</td>
+                  <td>{{ line.quantity }}</td>
+                  <td>@if (line.unitPrice !== null) { ${{ line.unitPrice.toFixed(2) }} } @else { — }</td>
+                  <td>@if (line.lineTotal !== null) { ${{ line.lineTotal.toFixed(2) }} } @else { — }</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr><td colspan="3"><strong>Total</strong></td><td><strong>${{ order.total.toFixed(2) }}</strong></td></tr>
+            </tfoot>
+          </table>
+        }
+
+        @if (order.unmatchedItems.length > 0) {
+          <p class="unmatched">
+            ⚠️ Not on the menu: {{ order.unmatchedItems.join(', ') }}
+          </p>
+        }
+
+        <p class="confirmation">🤖 {{ order.confirmationText }}</p>
+        <button class="secondary-btn" (click)="replayConfirmation()">🔊 Replay</button>
+      </div>
+
+      <button class="primary-btn" (click)="proceed()">
+        Continue to Review →
+      </button>
+    }
+  }
+</div>

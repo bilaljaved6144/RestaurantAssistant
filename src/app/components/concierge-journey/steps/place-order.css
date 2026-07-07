@@ -1,0 +1,125 @@
+.link-btn {
+  background: none;
+  border: none;
+  color: #e63946;
+  cursor: pointer;
+  font-size: 0.82rem;
+  padding: 0 6px;
+  text-decoration: underline;
+}
+
+.mic-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0;
+}
+
+.mic-btn {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: none;
+  background: #e63946;
+  color: #fff;
+  font-size: 2.4rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(230, 57, 70, 0.35);
+}
+
+.mic-btn:hover:not(:disabled)  { transform: scale(1.05); }
+.mic-btn.recording {
+  background: #b91c1c;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.mic-btn.busy      { background: #999; cursor: wait; }
+.mic-btn:disabled  { opacity: 0.7; cursor: not-allowed; }
+
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.5); }
+  70%  { box-shadow: 0 0 0 18px rgba(230, 57, 70, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(230, 57, 70, 0); }
+}
+
+.status {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+}
+
+.flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+.flow-step {
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  font-size: 0.78rem;
+  color: #999;
+  transition: all 0.2s;
+}
+
+.flow-step.active {
+  background: #e63946;
+  color: #fff;
+  border-color: #e63946;
+  font-weight: 600;
+}
+
+.arrow { color: #ccc; font-size: 0.9rem; }
+
+.quote {
+  margin: 0;
+  font-style: italic;
+  color: #444;
+  font-size: 0.9rem;
+}
+
+.order-card { display: flex; flex-direction: column; gap: 10px; }
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+
+.order-table th, .order-table td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.order-table th { color: #666; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; }
+.order-table tfoot td { border-bottom: none; padding-top: 10px; color: #1d3557; }
+
+.unmatched {
+  margin: 0;
+  padding: 8px 12px;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #8a5a00;
+}
+
+.confirmation {
+  margin: 0;
+  padding: 10px 14px;
+  background: #fff5f5;
+  border-left: 3px solid #e63946;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  color: #333;
+}

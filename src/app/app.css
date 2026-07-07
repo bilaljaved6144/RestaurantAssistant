@@ -64,6 +64,18 @@
 .tab-btn:hover  { color: #e63946; }
 .tab-btn.active { color: #e63946; border-bottom-color: #e63946; font-weight: 600; }
 
+.tab-btn.journey-tab { font-weight: 600; }
+.tab-btn.journey-tab.active {
+  background: linear-gradient(180deg, #fff5f5 0%, #fff 100%);
+}
+
+.tab-divider {
+  width: 1px;
+  align-self: stretch;
+  background: #e8e8e8;
+  margin: 8px 6px;
+}
+
 /* ===== Content ===== */
 .tab-content {
   flex: 1;

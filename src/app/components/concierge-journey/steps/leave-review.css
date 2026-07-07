@@ -1,0 +1,124 @@
+.examples-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.examples-label { font-size: 0.82rem; color: #666; margin-right: 4px; }
+
+.example-chip {
+  background: #fff3f3;
+  border: 1px solid #e63946;
+  color: #e63946;
+  padding: 5px 12px;
+  border-radius: 18px;
+  cursor: pointer;
+  font-size: 0.76rem;
+  transition: all 0.2s;
+}
+
+.example-chip:hover { background: #e63946; color: #fff; }
+
+.review-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.review-input:focus { border-color: #e63946; }
+
+.tag-service {
+  float: right;
+  font-size: 0.7rem;
+  color: #888;
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 400;
+}
+
+.sentiment-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 8px 0 14px;
+}
+
+.sentiment-badge.positive { background: #dcfce7; color: #166534; }
+.sentiment-badge.negative { background: #fee2e2; color: #991b1b; }
+.sentiment-badge.neutral  { background: #f1f5f9; color: #475569; }
+.sentiment-badge.mixed    { background: #fef3c7; color: #92400e; }
+
+.scores { display: flex; flex-direction: column; gap: 8px; }
+
+.score {
+  display: grid;
+  grid-template-columns: 90px 1fr 48px;
+  gap: 10px;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.lbl { color: #555; }
+.val { text-align: right; color: #666; font-weight: 600; }
+
+.bar {
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fill { height: 100%; transition: width 0.4s; }
+.fill.pos { background: #22c55e; }
+.fill.neu { background: #94a3b8; }
+.fill.neg { background: #ef4444; }
+
+.phrases {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.phrases-label { font-size: 0.82rem; color: #666; margin-right: 4px; }
+
+.phrase {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+}
+
+.manager-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #fff 100%);
+  border-left: 3px solid #1d3557;
+}
+
+.manager-reply {
+  margin: 0;
+  font-style: italic;
+  color: #333;
+  line-height: 1.6;
+  font-size: 0.92rem;
+}
+
+.finish-row {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}

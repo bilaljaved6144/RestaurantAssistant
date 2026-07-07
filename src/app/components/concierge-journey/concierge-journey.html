@@ -1,0 +1,32 @@
+<div class="journey-wrapper">
+  <div class="journey-header">
+    <h2>🍽️ Guest Journey</h2>
+    <p class="subtitle">
+      A single end-to-end flow that chains <strong>Vision → OpenAI → Speech → Language</strong>
+      to serve one restaurant guest from menu to review.
+    </p>
+  </div>
+
+  <ol class="stepper">
+    @for (s of steps; track s.id) {
+      <li class="step" [class]="stepStatus(s.id)" (click)="goTo(s.id)">
+        <div class="bubble">
+          @if (stepStatus(s.id) === 'done') { ✓ } @else { {{ s.id }} }
+        </div>
+        <div class="label">
+          <span class="title">{{ s.icon }} {{ s.title }}</span>
+          <span class="service">{{ s.service }}</span>
+        </div>
+      </li>
+    }
+  </ol>
+
+  <div class="step-content">
+    @switch (currentStep()) {
+      @case (1) { <app-scan-menu-step   (completed)="advance()" /> }
+      @case (2) { <app-get-advice-step  (completed)="advance()" /> }
+      @case (3) { <app-place-order-step (completed)="advance()" /> }
+      @case (4) { <app-leave-review-step (completed)="advance()" (restart)="restart()" /> }
+    }
+  </div>
+</div>

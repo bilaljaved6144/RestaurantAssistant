@@ -1,0 +1,53 @@
+<div class="step-panel">
+  <div class="step-intro">
+    <h3>Step 1 · Scan the menu</h3>
+    <p>
+      Upload a photo of the restaurant menu. <strong>Azure AI Vision</strong> extracts the raw
+      text (OCR), then <strong>Azure OpenAI</strong> parses it into a structured list of dishes
+      that will ground every later step of the journey.
+    </p>
+  </div>
+
+  <label class="upload-zone" for="menuInput">
+    @if (previewUrl()) {
+      <img [src]="previewUrl()" alt="Menu preview" class="preview" />
+    } @else {
+      <div class="placeholder">
+        <div class="icon">📷</div>
+        <p>Click to upload a menu photo</p>
+        <span>JPG, PNG, WEBP</span>
+      </div>
+    }
+  </label>
+  <input id="menuInput" type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+
+  <button
+    class="primary-btn"
+    (click)="extract()"
+    [disabled]="!selectedFile() || isLoading()">
+    @if (isLoading()) { ⏳ Extracting menu... } @else { 🔍 Extract Menu with Vision + OpenAI }
+  </button>
+
+  @if (errorMsg()) { <div class="error-msg">⚠️ {{ errorMsg() }}</div> }
+
+  @if (menuItems.length > 0) {
+    <div class="card">
+      <h4>✅ Parsed menu ({{ menuItems.length }} items)</h4>
+      @if (caption()) { <p class="caption">🖼️ Vision caption: <em>{{ caption() }}</em></p> }
+      <ul class="menu-list">
+        @for (item of menuItems; track item.name) {
+          <li>
+            <span>{{ item.name }}</span>
+            @if (item.price !== null && item.price !== undefined) {
+              <span class="price">${{ item.price.toFixed(2) }}</span>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+
+    <button class="primary-btn" (click)="proceed()">
+      Continue to Recommendations →
+    </button>
+  }
+</div>

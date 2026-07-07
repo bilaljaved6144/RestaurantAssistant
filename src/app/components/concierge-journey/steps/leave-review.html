@@ -1,0 +1,79 @@
+<div class="step-panel">
+  <div class="step-intro">
+    <h3>Step 4 · Leave a review</h3>
+    <p>
+      Share how the meal went. <strong>Azure AI Language</strong> extracts sentiment and key
+      phrases, and <strong>Azure OpenAI</strong> uses that structured signal to draft a
+      personalised manager reply that references what you actually said.
+    </p>
+  </div>
+
+  <div class="examples-row">
+    <span class="examples-label">Try an example:</span>
+    @for (ex of examples; track ex) {
+      <button class="example-chip" (click)="useExample(ex)">{{ ex.slice(0, 45) }}…</button>
+    }
+  </div>
+
+  <textarea
+    [(ngModel)]="reviewText"
+    placeholder="How was your experience today?"
+    rows="4"
+    class="review-input"></textarea>
+
+  <button class="primary-btn" (click)="analyze()" [disabled]="isLoading() || !reviewText.trim()">
+    @if (isLoading()) { ⏳ Analyzing... } @else { ⭐ Analyze &amp; Draft Reply }
+  </button>
+
+  @if (result(); as r) {
+    @if (r.error) {
+      <div class="error-msg">⚠️ {{ r.error }}</div>
+    } @else {
+      <div class="card">
+        <h4>📊 Sentiment analysis <span class="tag-service">Azure Language</span></h4>
+        <div class="sentiment-badge" [class]="sentimentClass()">
+          {{ sentimentEmoji() }} {{ r.sentiment }}
+        </div>
+
+        <div class="scores">
+          <div class="score">
+            <span class="lbl">😊 Positive</span>
+            <div class="bar"><div class="fill pos" [style.width.%]="r.confidenceScores.positive"></div></div>
+            <span class="val">{{ r.confidenceScores.positive }}%</span>
+          </div>
+          <div class="score">
+            <span class="lbl">😐 Neutral</span>
+            <div class="bar"><div class="fill neu" [style.width.%]="r.confidenceScores.neutral"></div></div>
+            <span class="val">{{ r.confidenceScores.neutral }}%</span>
+          </div>
+          <div class="score">
+            <span class="lbl">😞 Negative</span>
+            <div class="bar"><div class="fill neg" [style.width.%]="r.confidenceScores.negative"></div></div>
+            <span class="val">{{ r.confidenceScores.negative }}%</span>
+          </div>
+        </div>
+
+        @if (r.keyPhrases.length > 0) {
+          <div class="phrases">
+            <span class="phrases-label">🔑 Key phrases:</span>
+            @for (p of r.keyPhrases; track p) {
+              <span class="phrase">{{ p }}</span>
+            }
+          </div>
+        }
+      </div>
+
+      @if (r.managerResponse) {
+        <div class="card manager-card">
+          <h4>💌 Manager response <span class="tag-service">Azure OpenAI</span></h4>
+          <p class="manager-reply">{{ r.managerResponse }}</p>
+        </div>
+      }
+
+      <div class="finish-row">
+        <button class="secondary-btn" (click)="startOver()">🔄 Start a new journey</button>
+        <button class="primary-btn" (click)="finish()">✅ Finish</button>
+      </div>
+    }
+  }
+</div>

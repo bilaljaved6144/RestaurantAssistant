@@ -1,0 +1,124 @@
+.journey-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.journey-header h2 {
+  margin: 0 0 4px;
+  color: #1d3557;
+  font-size: 1.35rem;
+}
+
+.journey-header .subtitle {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* ===== Stepper ===== */
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  list-style: none;
+  padding: 16px 12px;
+  margin: 0;
+  background: #fafafa;
+  border-radius: 12px;
+  position: relative;
+}
+
+.step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+  min-width: 0;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: calc(50% + 24px);
+  right: calc(-50% + 24px);
+  height: 2px;
+  background: #e0e0e0;
+  z-index: 0;
+}
+
+.step.done:not(:last-child)::after { background: #e63946; }
+
+.bubble {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  background: #fff;
+  border: 2px solid #d0d0d0;
+  color: #999;
+  z-index: 1;
+  transition: all 0.2s;
+}
+
+.step.active .bubble {
+  background: #e63946;
+  border-color: #e63946;
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(230, 57, 70, 0.15);
+}
+
+.step.done .bubble {
+  background: #e63946;
+  border-color: #e63946;
+  color: #fff;
+}
+
+.step.pending { cursor: not-allowed; }
+.step.pending .label { opacity: 0.55; }
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label .title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.label .service {
+  font-size: 0.68rem;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.step.active .label .title { color: #e63946; }
+
+.step-content { min-height: 400px; }
+
+@media (max-width: 640px) {
+  .stepper { padding: 12px 4px; gap: 2px; }
+  .step:not(:last-child)::after { left: calc(50% + 18px); right: calc(-50% + 18px); }
+  .bubble { width: 30px; height: 30px; font-size: 0.85rem; }
+  .label .title   { font-size: 0.72rem; }
+  .label .service { display: none; }
+}

@@ -1,0 +1,112 @@
+/* Shared styles for all four journey steps. Each step imports this via styleUrls. */
+
+.step-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.step-intro {
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+  border-left: 3px solid #e63946;
+  border-radius: 8px;
+}
+
+.step-intro h3 {
+  margin: 0 0 4px;
+  color: #1d3557;
+  font-size: 1.05rem;
+}
+
+.step-intro p {
+  margin: 0;
+  font-size: 0.86rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.error-msg {
+  padding: 10px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #b91c1c;
+  font-size: 0.87rem;
+}
+
+.primary-btn {
+  padding: 12px 22px;
+  background: #e63946;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: flex-start;
+}
+
+.primary-btn:hover:not(:disabled) { background: #c1121f; }
+.primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.secondary-btn {
+  padding: 10px 18px;
+  background: #fff;
+  color: #e63946;
+  border: 1px solid #e63946;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.secondary-btn:hover { background: #fff3f3; }
+
+.card {
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+}
+
+.card h4 {
+  margin: 0 0 10px;
+  color: #1d3557;
+  font-size: 0.95rem;
+}
+
+/* Menu context banner reused by later steps */
+.menu-banner {
+  padding: 10px 14px;
+  background: #fafafa;
+  border: 1px dashed #d0d0d0;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: #555;
+}
+
+.menu-banner strong { color: #e63946; }
+
+.menu-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu-list li {
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  font-size: 0.83rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.menu-list .price { color: #e63946; font-weight: 600; white-space: nowrap; }

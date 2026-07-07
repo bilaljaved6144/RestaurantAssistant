@@ -8,8 +8,8 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  chat(message: string, history: { role: string; content: string }[] = []): Observable<any> {
-    return this.http.post(`${this.baseUrl}/chat`, { message, history });
+  chat(message: string, history: { role: string; content: string }[] = [], sessionId?: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/chat`, { message, history, sessionId });
   }
 
   analyzeImage(file: File): Observable<any> {
@@ -30,5 +30,22 @@ export class ApiService {
 
   synthesizeSpeech(text: string): Observable<Blob> {
     return this.http.post(`${this.baseUrl}/speech/synthesize`, { text }, { responseType: 'blob' });
+  }
+
+  // ===== Concierge Journey endpoints =====
+
+  extractMenu(file: File, sessionId: string): Observable<any> {
+    const form = new FormData();
+    form.append('image', file);
+    form.append('sessionId', sessionId);
+    return this.http.post(`${this.baseUrl}/menu/extract`, form);
+  }
+
+  parseOrder(text: string, sessionId: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/order/parse`, { text, sessionId });
+  }
+
+  respondToReview(text: string, sessionId?: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/review/respond`, { text, sessionId });
   }
 }

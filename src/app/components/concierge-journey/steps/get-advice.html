@@ -1,0 +1,74 @@
+<div class="step-panel">
+  <div class="step-intro">
+    <h3>Step 2 · Get personalised advice</h3>
+    <p>
+      Ask <strong>Azure OpenAI</strong> for recommendations. Because the extracted menu is
+      injected into the system prompt, replies are grounded in <em>this restaurant's</em> menu
+      instead of generic knowledge.
+    </p>
+  </div>
+
+  @if (!session.hasMenu()) {
+    <div class="error-msg">⚠️ No menu is loaded. Please go back to Step 1 and scan a menu first.</div>
+  } @else {
+    <div class="menu-banner">
+      <strong>Menu context loaded</strong> — {{ session.menuItems().length }} items available.
+      <button class="link-btn" (click)="showMenu.set(!showMenu())">
+        {{ showMenu() ? 'Hide' : 'Show' }} menu
+      </button>
+      @if (showMenu()) {
+        <ul class="menu-list">
+          @for (item of session.menuItems(); track item.name) {
+            <li>
+              <span>{{ item.name }}</span>
+              @if (item.price !== null && item.price !== undefined) {
+                <span class="price">${{ item.price.toFixed(2) }}</span>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="chat-pane">
+      @if (messages().length === 0) {
+        <div class="empty">
+          <div class="empty-icon">🤖</div>
+          <p>Ask me about anything on the menu.</p>
+          <div class="chips">
+            @for (s of suggestions; track s) {
+              <button class="chip" (click)="sendSuggestion(s)">{{ s }}</button>
+            }
+          </div>
+        </div>
+      }
+
+      @for (msg of messages(); track $index) {
+        <div class="message" [class.user-msg]="msg.role === 'user'" [class.bot-msg]="msg.role === 'assistant'">
+          <span class="avatar">{{ msg.role === 'user' ? '👤' : '🤖' }}</span>
+          <div class="bubble">{{ msg.content }}</div>
+        </div>
+      }
+
+      @if (isLoading()) {
+        <div class="message bot-msg">
+          <span class="avatar">🤖</span>
+          <div class="bubble typing"><span></span><span></span><span></span></div>
+        </div>
+      }
+    </div>
+
+    <div class="input-row">
+      <textarea
+        [(ngModel)]="inputText"
+        (keydown)="onKeyDown($event)"
+        placeholder="Ask about the menu... (Enter to send)"
+        rows="2"></textarea>
+      <button class="send-btn" (click)="sendMessage()" [disabled]="isLoading() || !inputText.trim()">➤</button>
+    </div>
+
+    <button class="primary-btn" (click)="proceed()" [disabled]="messages().length === 0">
+      Continue to Voice Order →
+    </button>
+  }
+</div>
